@@ -1,0 +1,26 @@
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 3000 available to the world outside this container
+EXPOSE 3000
+
+# Copy entrypoint script into the container
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Ensure entrypoint script is executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Use entrypoint script to check for environment variables
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Run app.py when the container launches
+CMD ["uvicorn", "opendevin.server.listen:app", "--host", "0.0.0.0", "--port", "3000"]
